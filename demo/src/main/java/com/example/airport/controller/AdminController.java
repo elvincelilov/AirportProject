@@ -1,0 +1,78 @@
+package com.example.airport.controller;
+
+import com.example.airport.dto.FlightDto;
+import com.example.airport.dto.UserDto;
+import com.example.airport.mapper.FlightMapper;
+import com.example.airport.mapper.UserMapper;
+import com.example.airport.model.Flight;
+import com.example.airport.model.User;
+import com.example.airport.service.FlightService;
+import com.example.airport.service.UserService;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/admin")
+public class AdminController {
+
+    private FlightService flightService;
+    private UserService userService;
+
+    public AdminController(FlightService flightService, UserService userService) {
+        this.flightService = flightService;
+        this.userService = userService;
+    }
+    @PostMapping("/flights")
+    public FlightDto addFlight(@RequestBody FlightDto flightDto) {
+        Flight flight1=FlightMapper.toEntity(flightDto);
+        Flight savedFlight=flightService.addFlight(flight1);
+        return FlightMapper.toDto(savedFlight);
+    }
+    @PutMapping("/flights/{id}")
+    public FlightDto updateFlight(@RequestBody FlightDto flightDto, @PathVariable Long id) {
+        Flight updated = flightService.updateFlight(id, flightDto);
+        return FlightMapper.toDto(updated);
+    }
+    @DeleteMapping("/flights/{id}")
+    public void deleteFlight(@PathVariable Long id) {
+        flightService.deleteFlight(id);
+    }
+    @GetMapping("/flights/{id}")
+    public FlightDto getFlightById(@PathVariable Long id) {
+        Flight flight=flightService.getFlightById(id);
+        return FlightMapper.toDto(flight);
+    }
+    @GetMapping("/flights")
+    public List<FlightDto> getAllFlights() {
+        return flightService.getAllFlights()
+                .stream()
+                .map(FlightMapper::toDto)
+                .toList();
+    }
+
+    @GetMapping("/users")
+    public List<UserDto> getAllUsers() {
+        return userService.getAllUsers()
+                .stream()
+                .map(UserMapper::toDto)
+                .toList();
+    }
+
+    @DeleteMapping("/users/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+    }
+    @GetMapping("/users/{id}")
+    public UserDto getUserById(@PathVariable Long id) {
+        User user = userService.findUserById(id);
+        return UserMapper.toDto(user);
+    }
+
+    @PutMapping("/users/{id}")
+    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
+        User updated  = userService.updateUser(id, userDto);
+        return UserMapper.toDto(updated);
+    }
+
+}
