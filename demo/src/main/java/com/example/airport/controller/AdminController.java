@@ -8,6 +8,7 @@ import com.example.airport.model.Flight;
 import com.example.airport.model.User;
 import com.example.airport.service.FlightService;
 import com.example.airport.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,20 +60,22 @@ public class AdminController {
                 .toList();
     }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping("/profile")
+    public void deleteUser() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        userService.deleteUserByEmail(email);
     }
-    @GetMapping("/users/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
-        User user = userService.findUserById(id);
-        return UserMapper.toDto(user);
+    @GetMapping("/profile")
+    public UserDto getUserByEmail() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return UserMapper.toDto(userService.findUserByEmail(email));
     }
 
-    @PutMapping("/users/{id}")
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
-        User updated  = userService.updateUser(id, userDto);
-        return UserMapper.toDto(updated);
+    @PutMapping("/profile")
+    public UserDto updateUser(@RequestBody UserDto userDto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User updatedUser = userService.updateUser(email,userDto);
+        return UserMapper.toDto(updatedUser);
     }
 
 }

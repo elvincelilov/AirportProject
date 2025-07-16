@@ -22,16 +22,18 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUserByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        userRepository.delete(user);
     }
 
     public User saveUser(User user) {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long id , UserDto userDto) {
-        User user = userRepository.findById(id)
+    public User updateUser(String email , UserDto userDto) {
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         user.setUsername(userDto.getUsername());

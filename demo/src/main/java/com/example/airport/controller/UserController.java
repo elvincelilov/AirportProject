@@ -51,7 +51,7 @@ public class UserController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String email = authentication.getName();
         User user = userService.findUserByEmail(email);
-        return UserMapper.toDto(userService.updateUser(user.getId(), userDto));
+        return UserMapper.toDto(userService.updateUser(email,userDto));
     }
 
 }
